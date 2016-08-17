@@ -3,15 +3,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>668af518-c8aa-421d-9ccc-eef8b2353512</ProjectGuid>
+    <ProjectGuid>1e65e85d-6edb-4d8b-9125-4ebd6c6872ac</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>TraceSource.py</StartupFile>
+    <StartupFile>TraceSourcePy.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>TraceSource</Name>
-    <RootNamespace>TraceSource</RootNamespace>
+    <Name>TraceSourcePy</Name>
+    <RootNamespace>TraceSourcePy</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="TraceSource.py" />
+    <Compile Include="TraceSourcePy.py" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

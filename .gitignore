@@ -1,2 +1,4 @@
 /TraceSource/*.suo
 /TraceSource/TraceSource/obj
+/*.suo
+/TraceSourcePy/obj
