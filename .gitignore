@@ -2,3 +2,5 @@
 /TraceSource/TraceSource/obj
 /*.suo
 /TraceSourcePy/obj
+/TraceSourceSharp/obj
+/TraceSourceSharp/bin
