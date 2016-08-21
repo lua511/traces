@@ -54,21 +54,19 @@ namespace TraceSourceSharp.View
 
         public int XOff { get; set; }
         public int YOff { get;set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
 
-        public  void DrawBuffer(Graphics graphics)
+        public  void DrawBuffer(Graphics graphics,int w,int h)
         {
             if(Monitor.TryEnter(firstLocker))
             {
                 try
                 {
-
+                    graphics.Clear(Color.LightYellow);
                     foreach (var ele in first)
                     {
                         var p = ele as View.ViewElement;
-                        if (p.x >= XOff && p.y >= YOff && p.x <= XOff + Width
-                            && p.y <= YOff + Height)
+                        if (p.x >= XOff && p.y >= YOff && p.x <= XOff + w
+                            && p.y <= YOff + h)
                         {
                             graphics.FillRectangle(Brushes.LightPink
                                             , p.x - XOff, p.y - YOff

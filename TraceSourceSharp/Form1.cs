@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
@@ -14,13 +15,15 @@ namespace TraceSourceSharp
     public partial class Form1 : Form
     {
         private readonly string configFileName = "config.xml";
+        private Thread bufferThread;
         public Form1()
         {
             InitializeComponent();
             Source.DataCenter.main.StatusEvent += UpdateStatus;
-            View.ViewCenter.main.Width = 800;
-            View.ViewCenter.main.Height = 800;
             timer1.Start();
+            bufferThread = new Thread(UiBuffer);
+            bufferThread.IsBackground = true;
+            bufferThread.Start();
         }
 
         private void ResetForm()
@@ -50,7 +53,7 @@ namespace TraceSourceSharp
         private void Panel1_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            View.ViewCenter.main.DrawBuffer(g);
+            GraphicsBuffer.main.FastDrawBuffer(panel1.Width,panel1.Height,g);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -139,12 +142,23 @@ try run another instance for now folder"
 
         private void OnTimer(object sender, EventArgs e)
         {
-            panel1.Invalidate();
+            //panel1.Invalidate();
+        }
+
+        private void UiBuffer()
+        {
+            while(bufferThread != null)
+            {
+                GraphicsBuffer.main.Update();
+                panel1.Invalidate();
+                Thread.Sleep(50);
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             timer1.Stop();
+            bufferThread = null;
         }
     }
 }
