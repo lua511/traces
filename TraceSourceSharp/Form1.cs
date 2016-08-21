@@ -167,5 +167,47 @@ try run another instance for now folder"
         {
             isWorking = false;
         }
+
+        bool isMoving = false;
+        Point downPoint;
+
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            downPoint = e.Location;
+            isMoving = true;
+        }
+
+        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        {
+            isMoving = false;
+        }
+
+        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(!isMoving)
+            {
+                return;
+            }
+            int offx = e.Location.X - downPoint.X;
+            int offy = e.Location.Y - downPoint.Y;
+            downPoint = e.Location;
+            offx *= 10;
+            offy *= 10;
+
+            int lx = View.ViewCenter.main.XOff;
+            int ly = View.ViewCenter.main.YOff;
+
+            lx += offx;
+            ly += offy;
+
+            if (lx < 0) lx = 0;
+            if (ly < 0) ly = 0;
+            if (lx > View.ViewCenter.main.LastMaxWidth)
+                lx = View.ViewCenter.main.LastMaxWidth - panel1.Width / 2;
+            if (ly > View.ViewCenter.main.LastMaxHeight)
+                ly = View.ViewCenter.main.LastMaxHeight - panel1.Height / 2;
+            View.ViewCenter.main.XOff = lx;
+            View.ViewCenter.main.YOff = ly;
+        }
     }
 }

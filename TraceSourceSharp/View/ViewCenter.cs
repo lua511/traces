@@ -55,8 +55,13 @@ namespace TraceSourceSharp.View
         public int XOff { get; set; }
         public int YOff { get;set; }
 
+        public int LastMaxWidth { get; private set; }
+        public int LastMaxHeight { get; private set; }
+
         public  void DrawBuffer(Graphics graphics,int w,int h)
         {
+            var dataw = w;
+            var datah = h;
             if(Monitor.TryEnter(firstLocker))
             {
                 try
@@ -65,6 +70,9 @@ namespace TraceSourceSharp.View
                     foreach (var ele in first)
                     {
                         var p = ele as View.ViewElement;
+                        if (p.x + 200 > dataw) dataw = p.x + 200;
+                        if (p.y + 200 > datah) datah = p.y + 200;
+
                         if (p.x >= XOff && p.y >= YOff && p.x <= XOff + w
                             && p.y <= YOff + h)
                         {
@@ -80,6 +88,8 @@ namespace TraceSourceSharp.View
                     Monitor.Exit(firstLocker);
                 }
             }
+            LastMaxWidth = dataw;
+            LastMaxHeight = datah;
         }
     }
 }
