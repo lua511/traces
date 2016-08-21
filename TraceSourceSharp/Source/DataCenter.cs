@@ -37,8 +37,7 @@ namespace TraceSourceSharp.Source
         public DataCenterConfig config { get; private set; }
         #region Parse
         private bool islocked { get; set; }
-        private Thread worker;
-
+       
         public void Reload()
         {
             if(islocked)
@@ -47,11 +46,9 @@ namespace TraceSourceSharp.Source
             }
             islocked = true;
             FireStatusInformation("Processing");
-            worker = new Thread(ParseRoot);
-            worker.IsBackground = true;
-            worker.Start();
+            ThreadPool.QueueUserWorkItem(ParseRoot);
         }
-        void ParseRoot()
+        void ParseRoot(object param)
         {
             try
             {
@@ -65,9 +62,49 @@ namespace TraceSourceSharp.Source
                 }
                 config.files.Clear();
                 ParseFiles(config.root);
+                //10.3s@40
+                //10.0s@20
+                //10.0s@10
+                //10.0s@5
+                //10.0s@2
+                //16.0s@1
+                int SECTION_COUNT = 5;
+                ParseFileArgs[] pargs = new ParseFileArgs[SECTION_COUNT];
+                for(int i = 0;i < SECTION_COUNT; ++i)
+                {
+                    pargs[i] = new ParseFileArgs();
+                    pargs[i].IsCompleted = false;
+                }
+                int fi = 0;
                 foreach(var f in config.files)
                 {
-                    ParseFileInfo(f);
+                    pargs[fi].Elements.Add(f);
+                    ++fi;
+                    if(fi >= SECTION_COUNT)
+                    {
+                        fi = 0;
+                    }
+                }
+                for (int i = 0; i < SECTION_COUNT; ++i)
+                {
+                    ThreadPool.QueueUserWorkItem(FileArgsWorker,pargs[i]);
+                }
+                while(true)
+                {
+                    bool bcompleted = true;
+                    for(int i = 0;i < SECTION_COUNT;++i)
+                    {
+                        if(!pargs[i].IsCompleted)
+                        {
+                            bcompleted = false;
+                            break;
+                        }
+                    }
+                    if(bcompleted)
+                    {
+                        break;
+                    }
+                    Thread.Sleep(500);
                 }
                 FireStatusInformation("Completed");
             }
@@ -106,6 +143,17 @@ namespace TraceSourceSharp.Source
                 ParseFiles(f);
             }
         }
+
+        void    FileArgsWorker(object param)
+        {
+            ParseFileArgs pa = param as ParseFileArgs;
+            foreach(var f in pa.Elements)
+            {
+                ParseFileInfo(f);
+            }
+            pa.IsCompleted = true;
+        }
+
         bool ParseFileInfo(string fname)
         {
             var fi = new FileInfo(fname);

@@ -15,7 +15,7 @@ namespace TraceSourceSharp.Source
                                 new Dictionary<string, SourceFile>();
 
         public void PushFile(string fullname,DateTime writetime)
-        {
+        {            
             if (sources.ContainsKey(fullname))
             {
                 var v = sources[fullname];
@@ -29,7 +29,10 @@ namespace TraceSourceSharp.Source
                 v.fullName = fullname;
                 v.writeTime = writetime;
                 v.footPrint = 0;
-                sources.Add(fullname, v);
+                lock (this)
+                {
+                    sources.Add(fullname, v);
+                }
             }
         }
 

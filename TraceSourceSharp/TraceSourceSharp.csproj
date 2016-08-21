@@ -57,6 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\DataCenter.cs" />
     <Compile Include="Source\DataCenterConfig.cs" />
+    <Compile Include="Source\ParseFileArgs.cs" />
     <Compile Include="Source\ParseFolder.cs" />
     <Compile Include="Source\SourceFile.cs" />
     <Compile Include="Source\SourceFileList.cs" />

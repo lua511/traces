@@ -15,15 +15,14 @@ namespace TraceSourceSharp
     public partial class Form1 : Form
     {
         private readonly string configFileName = "config.xml";
-        private Thread bufferThread;
+        private bool isWorking = false;
         public Form1()
         {
             InitializeComponent();
             Source.DataCenter.main.StatusEvent += UpdateStatus;
-            timer1.Start();
-            bufferThread = new Thread(UiBuffer);
-            bufferThread.IsBackground = true;
-            bufferThread.Start();
+            isWorking = true;
+            ThreadPool.QueueUserWorkItem(UiBuffer);
+            ThreadPool.QueueUserWorkItem(TimerWorker);
         }
 
         private void ResetForm()
@@ -140,14 +139,14 @@ try run another instance for now folder"
             }
         }
 
-        private void OnTimer(object sender, EventArgs e)
+        private void OnTimer()
         {
             //panel1.Invalidate();
         }
 
-        private void UiBuffer()
+        private void UiBuffer(object param)
         {
-            while(bufferThread != null)
+            while(isWorking)
             {
                 GraphicsBuffer.main.Update();
                 panel1.Invalidate();
@@ -155,10 +154,18 @@ try run another instance for now folder"
             }
         }
 
+        private void TimerWorker(object param)
+        {
+            while(isWorking)
+            {
+                OnTimer();
+                Thread.Sleep(50);
+            }
+        }
+
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            timer1.Stop();
-            bufferThread = null;
+            isWorking = false;
         }
     }
 }
